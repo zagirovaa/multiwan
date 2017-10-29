@@ -128,6 +128,17 @@
     /ip firewall nat remove [find comment=$dstnatComment]
 }
 
+# Функция проверяет наличие нат правил
+# Формат вызова :put [$NatRulesExist]
+:local NatRulesExist do={
+    :local natRulesCount [:len [/ip firewall nat find comment=$dstnatComment]]
+    if ($natRulesCount>0) do={
+        :return true
+    } else={
+        :return false
+    }
+}
+
 
 ##############################################
 ## Основной код
@@ -176,12 +187,21 @@
                 :delay $connDelay
                 # Работающий резервный канал найден,
                 # поэтому нет смысла перебирать остальные
-                :set $counter $loopCount
+                :set counter $loopCount
             }
             $UnBlockPbxConns
             $AddDstNatRule $realIP
         }
         # Нумерация начинается с 0
         :set counter ($counter + 1)
+    }
+} else={
+    # На случай, если правила нат отсутствуют
+    # их необходимо добавить
+    :if ([$NatRulesExist]=false) do={
+        # Добавлять будем правила для адреса,
+        # соответствующего текущему каналу
+        :local pos [:find $gwList $currentGW]
+        $AddDstNatRule [:tostr [:pick $realIpList $pos]]
     }
 }
