@@ -31,6 +31,12 @@
 :local connDelay 200s
 # Продолжительность паузы перед повторной проверкой связи
 :local inetDelay 5s
+# Массив из внешних адресов
+# Внешние адреса должны располагаться в том же порядке,
+# что и адреса шлюзов
+:local realIpList [:toarray "172.10.32.144, 173.12.145.222"]
+# Массив из номеров портов, подлежащих пробросу
+:global portsList [:toarray "80, 1050, 2222, 5555"]
 # Адрес, используемый для проверки связи
 :global pingTarget 208.67.222.222
 # Количество пингов при проверке
@@ -41,6 +47,8 @@
 :global routeComment "ROUTE"
 # Комментарий для правила блокировки
 :global pbxComment "BLOCK"
+# Комментарий для правил проброса портов
+:global dstnatComment "DSTNAT"
 
 
 ##############################################
@@ -102,6 +110,24 @@
     /ip firewall filter remove [find comment=$pbxComment]
 }
 
+# Функция добавляет правило проброса портов
+# Формат вызова $AddDstNatRule "172.10.32.144"
+:local AddDstNatRule do={
+    :global dstnatComment
+    :global ipPbx
+    :global portsList
+    foreach i in=$portsList do={
+        /ip firewall nat add chain=dstnat protocol=udp action=dst-nat dst-address=$1 to-addresses=$ipPbx to-ports=[:tonum $i]
+    }
+}
+
+# Функция удаляет правило проброса портов
+# Формат вызова $RemDstNatRule
+:local RemDstNatRule do={
+    :global dstnatComment
+    /ip firewall nat remove [find comment=$dstnatComment]
+}
+
 
 ##############################################
 ## Основной код
@@ -124,6 +150,7 @@
     :while ($counter<$loopCount) do={
         # Получаем адрес шлюза из массива
         :local gwAddress [:tostr [:pick $gwList $counter]]
+        :local realIP [:tostr [:pick $realIpList $counter]]
         # Проверять будем только шлюз,
         # отличный от активного
         if ($gwAddress!=$currentGW) do={
@@ -136,6 +163,7 @@
             # отключения соединения по таймауту
             $BlockPbxConns
             $RemPbxConns
+            $RemDstNatRule
             $RemDefaultRoute
             $AddDefaultRoute $gwAddress
             # Канал может заработать не мгновенно,
@@ -151,6 +179,7 @@
                 :set $counter $loopCount
             }
             $UnBlockPbxConns
+            $AddDstNatRule $realIP
         }
         # Нумерация начинается с 0
         :set counter ($counter + 1)
