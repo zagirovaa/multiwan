@@ -117,7 +117,7 @@
     :global ipPbx
     :global portsList
     foreach i in=$portsList do={
-        /ip firewall nat add chain=dstnat protocol=udp action=dst-nat dst-address=$1 dst-port=[:tonum $i] to-addresses=$ipPbx to-ports=[:tonum $i]
+        /ip firewall nat add chain=dstnat protocol=udp action=dst-nat dst-address=$1 dst-port=[:tonum $i] to-addresses=$ipPbx to-ports=[:tonum $i] comment=$dstnatComment
     }
 }
 
