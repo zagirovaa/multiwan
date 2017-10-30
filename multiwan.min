@@ -67,6 +67,7 @@
 }
 
 :local NatRulesExist do={
+    :global dstnatComment
     :local natRulesCount [:len [/ip firewall nat find comment=$dstnatComment]]
     if ($natRulesCount>0) do={
         :return true
