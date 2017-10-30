@@ -51,16 +51,17 @@
     /ip firewall filter remove [find comment=$pbxComment]
 }
 
-:local AddDstNatRule do={
+:local AddDstNatRules do={
     :global dstnatComment
     :global ipPbx
     :global portsList
     foreach i in=$portsList do={
+        /ip firewall nat add chain=dstnat protocol=tcp action=dst-nat dst-address=$1 dst-port=[:tonum $i] to-addresses=$ipPbx to-ports=[:tonum $i] comment=$dstnatComment
         /ip firewall nat add chain=dstnat protocol=udp action=dst-nat dst-address=$1 dst-port=[:tonum $i] to-addresses=$ipPbx to-ports=[:tonum $i] comment=$dstnatComment
     }
 }
 
-:local RemDstNatRule do={
+:local RemDstNatRules do={
     :global dstnatComment
     /ip firewall nat remove [find comment=$dstnatComment]
 }
@@ -87,7 +88,7 @@
         if ($gwAddress!=$currentGW) do={
             $BlockPbxConns
             $RemPbxConns
-            $RemDstNatRule
+            $RemDstNatRules
             $RemDefaultRoute
             $AddDefaultRoute $gwAddress
             :delay $inetDelay
@@ -96,13 +97,13 @@
                 :set counter $loopCount
             }
             $UnBlockPbxConns
-            $AddDstNatRule $realIP
+            $AddDstNatRules $realIP
         }
         :set counter ($counter + 1)
     }
 } else={
     :if ([$NatRulesExist]=false) do={
         :local pos [:find $gwList $currentGW]
-        $AddDstNatRule [:tostr [:pick $realIpList $pos]]
+        $AddDstNatRules [:tostr [:pick $realIpList $pos]]
     }
 }

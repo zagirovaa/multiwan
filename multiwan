@@ -111,19 +111,20 @@
 }
 
 # Функция добавляет правило проброса портов
-# Формат вызова $AddDstNatRule "172.10.32.144"
-:local AddDstNatRule do={
+# Формат вызова $AddDstNatRules "172.10.32.144"
+:local AddDstNatRules do={
     :global dstnatComment
     :global ipPbx
     :global portsList
     foreach i in=$portsList do={
+        /ip firewall nat add chain=dstnat protocol=tcp action=dst-nat dst-address=$1 dst-port=[:tonum $i] to-addresses=$ipPbx to-ports=[:tonum $i] comment=$dstnatComment
         /ip firewall nat add chain=dstnat protocol=udp action=dst-nat dst-address=$1 dst-port=[:tonum $i] to-addresses=$ipPbx to-ports=[:tonum $i] comment=$dstnatComment
     }
 }
 
 # Функция удаляет правило проброса портов
-# Формат вызова $RemDstNatRule
-:local RemDstNatRule do={
+# Формат вызова $RemDstNatRules
+:local RemDstNatRules do={
     :global dstnatComment
     /ip firewall nat remove [find comment=$dstnatComment]
 }
@@ -174,7 +175,7 @@
             # отключения соединения по таймауту
             $BlockPbxConns
             $RemPbxConns
-            $RemDstNatRule
+            $RemDstNatRules
             $RemDefaultRoute
             $AddDefaultRoute $gwAddress
             # Канал может заработать не мгновенно,
@@ -190,7 +191,7 @@
                 :set counter $loopCount
             }
             $UnBlockPbxConns
-            $AddDstNatRule $realIP
+            $AddDstNatRules $realIP
         }
         # Нумерация начинается с 0
         :set counter ($counter + 1)
@@ -202,6 +203,6 @@
         # Добавлять будем правила для адреса,
         # соответствующего текущему каналу
         :local pos [:find $gwList $currentGW]
-        $AddDstNatRule [:tostr [:pick $realIpList $pos]]
+        $AddDstNatRules [:tostr [:pick $realIpList $pos]]
     }
 }
