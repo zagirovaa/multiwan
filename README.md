@@ -1,5 +1,5 @@
 # MultiWAN
-Mikrotik Multi WAN with PBX  
+MikroTik Multi WAN with PBX  
 &nbsp;
 ## Содержание
 + [Назначение](#назначени)
