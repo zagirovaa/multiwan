@@ -1,5 +1,3 @@
-[zip source](https://github.com/ZagirovAA/multiwan/archive/v1.0.zip)
-[tarball source](https://github.com/ZagirovAA/multiwan/archive/v1.0.tar.gz)
 # MultiWAN
 MikroTik Multi WAN with PBX  
 &nbsp;
