@@ -1,3 +1,5 @@
+[zip source](https://github.com/ZagirovAA/multiwan/archive/v1.0.zip)
+[tarball source](https://github.com/ZagirovAA/multiwan/archive/v1.0.tar.gz)
 # MultiWAN
 MikroTik Multi WAN with PBX  
 &nbsp;
@@ -6,7 +8,6 @@ MikroTik Multi WAN with PBX
 + [Схема](#схема)
 + [Описание](#описание)
 + [Установка](#установка)  
-+ [Скачать](#скачать)
 &nbsp;&nbsp;
 ## Назначение
 Скрипт будет полезен службам _"такси по вызову"_, использующим роутеры от **[MikroTik](https://mikrotik.com/)**, для применения двух и более Интернет каналов с переключением между ними по схеме **failover**, то есть в тот или иной момент активным является один из каналов.  
@@ -29,9 +30,4 @@ MikroTik Multi WAN with PBX
 
 + Укажите необходимые параметры начала и окончания задачи и периодичность ее выполнения, а так же в раздел **_On event_** добавьте исходный код скрипта из этого проекта.
 
-+ Не забудьте внести коррективы в разделе инициализации скрипта (сменить адреса шлюзов, паузы, адрес pbx и прочее).  
-&nbsp;&nbsp;
-## Скачать
-
-[zip source](https://github.com/ZagirovAA/multiwan/archive/v1.0.zip)
-[tarball source](https://github.com/ZagirovAA/multiwan/archive/v1.0.tar.gz)
++ Не забудьте внести коррективы в разделе инициализации скрипта (сменить адреса шлюзов, паузы, адрес pbx и прочее).
