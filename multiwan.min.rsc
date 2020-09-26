@@ -1,3 +1,5 @@
+#!/usr/bin/env lua
+
 :local gwList [:toarray "192.168.66.1, 192.168.77.1"]
 :local connDelay 200s
 :local inetDelay 5s
